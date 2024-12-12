@@ -30,6 +30,7 @@ solara run app.py
 * ``model.py``: Contains the agent class, and the overall model class.
 * ``agents.py``: Contains the agent class.
 * ``app.py``: Contains the code for the interactive Solara visualization.
+* ``analysis.ipynb``: Jupyter notebook to run and analyse the model.
 
 ## Acknowledgement
 
