@@ -21,8 +21,8 @@ python -m pip install mesa
 ## How to run
 To run the model interactively, in this directory, run the following command
 
-```
-    $ solara run app.py
+```bash
+solara run app.py
 ```
 
 ## Files
