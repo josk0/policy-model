@@ -5,16 +5,22 @@ from model import PolicyModel
 from agents import PolicyAgent
 
 def agent_portrayal(agent):
-    return {
-        "color": "blue" if agent.privileged else "red" if agent.marginalized else "gray",
-        "size": 10
-    }
+    color = "gray"
+    if agent.privileged:
+        if agent.impact == 0: color = "blue"  
+        else: color = "cyan"
+    elif agent.marginalized:
+        if agent.impact == 0: color = "red"  
+        else: color = "pink"
+    return {"size": 10, "color": color}
+
 
 model_params = {
-    "num_agents": Slider("Number of Agents", 100, 10, 500, 10),
+    "num_agents": Slider("Number of Agents", 20, 10, 500, 10),
     "privileged_fraction": Slider("Privileged Fraction", 0.2, 0.0, 1.0, 0.1),
-    "marginalized_fraction": Slider("Marginalized Fraction", 0.1, 0.0, 1.0, 0.1),
-    "steps": Slider("Number of Steps", 10, 1, 50, 1),
+    "marginalized_fraction": Slider("Marginalized Fraction", 0.2, 0.0, 1.0, 0.1),
+    "policy_expansion": Slider("Policy Coverage Expansion Rate", 0.02, 0.0, 0.2, 0.01),
+    "trigger_level": Slider("Trigger Level", 0.35, 0.1, 1.0, 0.05),
 }
 
 def post_process_plot(ax):
@@ -25,8 +31,8 @@ NetworkPlot = make_space_component(agent_portrayal)
 
 StatePlot = make_plot_component(
     {
-        "Net Policy Support": "blue",
-        "Net Social Benefit": "green"
+        "Avg Policy Support": "blue",
+        "Avg Social Benefit": "green"
     },
     post_process=post_process_plot
 )
