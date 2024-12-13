@@ -21,6 +21,12 @@ model_params = {
     "marginalized_fraction": Slider("Marginalized Fraction", 0.2, 0.0, 1.0, 0.1),
     "policy_expansion": Slider("Policy Coverage Expansion Rate", 0.02, 0.0, 0.2, 0.01),
     "trigger_level": Slider("Trigger Level", 0.35, 0.1, 1.0, 0.05),
+    "policy_reaction": Slider("Policymaker reacts?", 0, 0, 1, 1, int),
+    # "seed": {
+    #     "type": "InputText",
+    #     "value": 42,
+    #     "label": "Random Seed",
+    # },
 }
 
 def post_process_plot(ax):

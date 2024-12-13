@@ -24,6 +24,7 @@ class PolicyModel(Model):
         marginalized_fraction: float = 0.1,
         policy_expansion: float = 0.01,
         trigger_level: float = 0.35,
+        policy_reaction: bool = False,
         seed=None,
     ):
         super().__init__(seed=seed)
@@ -33,6 +34,7 @@ class PolicyModel(Model):
         self.marginalized_fraction = marginalized_fraction
         self.policy_expansion = policy_expansion
         self.trigger_level = trigger_level
+        self.policy_reaction = policy_reaction
 
         # Create a network and grid
         self.graph = nx.barabasi_albert_graph(
@@ -131,7 +133,7 @@ class PolicyModel(Model):
                     self.grid.G.add_edge(party_unaligned, party_affected)
         
         # is support is less than benefit, increase policy coverage
-        if net_opinion(self) < net_impact(self): self.apply_policy(self.policy_expansion)
+        if self.policy_reaction and net_opinion(self) < net_impact(self): self.apply_policy(self.policy_expansion)
         
         # collect data
         self.datacollector.collect(self)
