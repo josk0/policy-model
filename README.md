@@ -35,9 +35,8 @@ This model investigates how public support for beneficial policies can erode due
 - Effects spread through network observation
 
 ## 💻 Installation
-
+Clone repository
 ```bash
-# Clone repository
 git clone https://github.com/josk0/policy-model.git
 cd policy-model
 ```
