@@ -87,15 +87,13 @@ class PolicyModel(Model):
     def apply_policy(self, rel_policy_expansion):
         eligible_nodes_nm = [ # nodes that are both not marginalized and not (yet) affected by policy
             node for node in self.graph.nodes() 
-            if self.grid.get_cell_list_contents([node])[0].impact == 0 and not self.grid.get_cell_list_contents([node])[0].marginalized
+            if self.grid.get_cell_list_contents([node])[0].impact == 0 and self.grid.get_cell_list_contents([node])[0].privileged
         ]
         eligible_nodes_m = [ # nodes that are marginalized and not (yet) affected by policy
             node for node in self.graph.nodes() 
             if self.grid.get_cell_list_contents([node])[0].impact == 0 and self.grid.get_cell_list_contents([node])[0].marginalized
         ]
         
-        # todo: need checks here for case where eligible_nodes_m or eligible_nodes_nm are empty
-
         num_policy_expansion = max(1, int(round(self.num_agents * rel_policy_expansion / 2)))
         affected_nodes = []
 
@@ -154,9 +152,12 @@ class PolicyModel(Model):
 
                 if unaligned_neighbors and affected_neighbors:
                     party_unaligned = np.random.choice(unaligned_neighbors)
-                    party_affected = np.random.choice(affected_neighbors)
-                    self.grid.G.add_edge(party_unaligned, party_affected)
-        
+                     # Remove the selected unaligned party from affected_neighbors if present
+                    available_affected = [n for n in affected_neighbors if n != party_unaligned]
+                    if available_affected:  # Only proceed if we have valid targets
+                        party_affected = np.random.choice(available_affected)
+                        self.grid.G.add_edge(party_unaligned, party_affected)
+            
         # is support is less than benefit, increase policy coverage
         if self.policy_reaction and av_opinion(self) < av_impact(self): self.apply_policy(self.rel_policy_expansion)
         
