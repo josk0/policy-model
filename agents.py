@@ -32,4 +32,4 @@ class PolicyAgent(Agent):
         self.num_connections = len(self.model.grid.get_neighbors(self.pos, include_center=False))
 
         # Logistic function to update opinion
-        self.opinion = 1 / (1 + np.exp(-observed_sum)) - 0.5
+        self.opinion = 2 / (1 + np.exp(-observed_sum)) - 1

@@ -19,10 +19,10 @@ class PolicyModel(Model):
 
     def __init__(
         self,
-        num_agents: int = 10,
-        privileged_fraction: float = 0.2,
-        marginalized_fraction: float = 0.1,
-        rel_policy_expansion: float = 0.01,
+        num_agents: int = 80,
+        privileged_fraction: float = 0.3,
+        marginalized_fraction: float = 0.3,
+        rel_policy_expansion: float = 0.05,
         trigger_level: float = 0.35,
         policy_reaction: bool = False,
         seed=None,
