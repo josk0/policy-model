@@ -18,14 +18,14 @@ def agent_portrayal(agent):
 
 
 model_params = {
-    "num_agents": Slider("Number of Agents", 80, 20, 700, 10),
-    "privileged_fraction": Slider("Privileged Fraction", 0.3, 0.1, 1.0, 0.1),
-    "marginalized_fraction": Slider("Marginalized Fraction", 0.3, 0.1, 1.0, 0.1),
-    "rel_policy_expansion": Slider("Policy Coverage Expansion Rate", 0.05, 0.0, 0.2, 0.01),
-    "trigger_level": Slider("Trigger Level", 0.35, 0.1, 1.0, 0.05),
+    "num_agents": Slider("Number of Agents", 140, 20, 700, 10),
+    "privileged_fraction": Slider("Privileged Fraction", 0.1, 0.05, 0.3, 0.05),
+    "marginalized_fraction": Slider("Marginalized Fraction", 0.3, 0.1, 0.5, 0.05),
+    "rel_policy_expansion": Slider("Policy Coverage Expansion Rate", 0.02, 0.0, 0.1, 0.01),
+    "trigger_level": Slider("Trigger Level", 0.45, 0.2, 1.0, 0.05),
     "policy_reaction": {
         "type": "Select",
-        "value": False,
+        "value": True,
         "values": [True, False],
         "label": "policy maker doubles down?",
     },

@@ -19,12 +19,12 @@ class PolicyModel(Model):
 
     def __init__(
         self,
-        num_agents: int = 80,
-        privileged_fraction: float = 0.3,
+        num_agents: int = 140,
+        privileged_fraction: float = 0.1,
         marginalized_fraction: float = 0.3,
-        rel_policy_expansion: float = 0.05,
-        trigger_level: float = 0.35,
-        policy_reaction: bool = False,
+        rel_policy_expansion: float = 0.02,
+        trigger_level: float = 0.45,
+        policy_reaction: bool = True,
         seed=None,
     ):
         super().__init__(seed=seed)

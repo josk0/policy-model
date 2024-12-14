@@ -105,7 +105,8 @@ This model explores several key questions in policy dynamics:
 - How do policy maker reactions influence long-term support?
 
 ## 📋 To Dos
-- should benefits and costs of the policy be symmetric (as they are currently)?
+- Observe opinion polarization in population
+- Should benefits and costs of the policy be symmetric (as they are currently)?
 - tbc...
 
 ## 🤝 Contributing
