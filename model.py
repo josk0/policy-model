@@ -36,6 +36,14 @@ class PolicyModel(Model):
         self.trigger_level = trigger_level
         self.policy_reaction = policy_reaction
 
+        # Data collector
+        self.datacollector = mesa.DataCollector(
+            {
+                "Avg Policy Support": av_opinion,
+                "Avg Social Benefit": av_impact,
+            }
+        )
+
         # Create a network and grid
         self.graph = nx.barabasi_albert_graph(
             n=self.num_agents,
@@ -46,28 +54,30 @@ class PolicyModel(Model):
         # Calculate degree centrality
         centrality = nx.degree_centrality(self.graph)
 
-        # Data collector
-        self.datacollector = mesa.DataCollector(
-            {
-                "Avg Policy Support": av_opinion,
-                "Avg Social Benefit": av_impact,
-            }
+        # select privileged nodes (agents will be initialized there accordingly)
+        sorted_nodes = sorted(centrality, key=centrality.get, reverse=True)
+        num_privileged = max(1, int(self.num_agents * self.privileged_fraction))
+        privileged_nodes = sorted_nodes[:num_privileged] # Assign privileged based on centrality
+        
+        # select nodes for marginalized agents
+        non_privileged_nodes = set(self.graph.nodes) - set(privileged_nodes)
+        num_marginalized = max(1, int(self.num_agents * self.marginalized_fraction))
+        # idea: could "cluster" marginalized nodes together in some way?
+        marginalized_nodes = np.random.choice(
+            list(non_privileged_nodes),  
+            size=min(num_marginalized, len(non_privileged_nodes)),  # Added safety check
+            replace=False,
         )
 
         # Initialize agents
-        sorted_nodes = sorted(centrality, key=centrality.get, reverse=True)
-        num_privileged = int(self.num_agents * self.privileged_fraction)
-        privileged_nodes = sorted_nodes[:num_privileged]
-
         for node in self.graph.nodes():
           a = PolicyAgent(
               self,
               False,
               False,
           )
-          a.marginalized = np.random.random() <= self.marginalized_fraction
-          #a.privileged = not a.marginalized and np.random.random() <= self.privileged_fraction
-          a.privileged = node in privileged_nodes  # Assign privileged based on centrality
+          a.marginalized = node in marginalized_nodes
+          a.privileged = node in privileged_nodes  
           self.grid.place_agent(a, node)
 
         # Apply initial policy intervention
@@ -86,20 +96,30 @@ class PolicyModel(Model):
         
         # todo: need checks here for case where eligible_nodes_m or eligible_nodes_nm are empty
 
-        abs_policy_expansion = int(round(self.num_agents * rel_policy_expansion / 2))
-        if abs_policy_expansion < 1: abs_policy_expansion = 1
+        num_policy_expansion = max(1, int(round(self.num_agents * rel_policy_expansion / 2)))
+        affected_nodes = []
 
-        affected_nodes = np.random.choice(
-            eligible_nodes_m,
-            size=abs_policy_expansion,
-            replace=False,
+        # Handle marginalized nodes
+        if eligible_nodes_m:
+            size_m = min(num_policy_expansion, len(eligible_nodes_m))
+            affected_nodes.extend(
+                np.random.choice(
+                    eligible_nodes_m,
+                    size=size_m,
+                    replace=False
+                )
             )
         
-        np.append(affected_nodes, np.random.choice(
-            eligible_nodes_nm,
-            size=abs_policy_expansion,
-            replace=False,
-        ))
+        # Handle non-marginalized nodes
+        if eligible_nodes_nm:
+            size_nm = min(num_policy_expansion, len(eligible_nodes_nm))
+            affected_nodes.extend(
+                np.random.choice(
+                    eligible_nodes_nm,
+                    size=size_nm,
+                    replace=False
+                )
+        )
         
         for node in affected_nodes:
             agent = self.grid.get_cell_list_contents([node])[0]
