@@ -72,9 +72,9 @@ class PolicyModel(Model):
         # Initialize agents
         for node in self.graph.nodes():
           a = PolicyAgent(
-              self,
-              False,
-              False,
+              model=self,
+              marginalized=False,
+              privileged=False,
           )
           a.marginalized = node in marginalized_nodes
           a.privileged = node in privileged_nodes  
@@ -85,81 +85,43 @@ class PolicyModel(Model):
     
 
     def apply_policy(self, rel_policy_expansion):
-        eligible_nodes_nm = [ # nodes that are both not marginalized and not (yet) affected by policy
-            node for node in self.graph.nodes() 
-            if self.grid.get_cell_list_contents([node])[0].impact == 0 and self.grid.get_cell_list_contents([node])[0].privileged
-        ]
-        eligible_nodes_m = [ # nodes that are marginalized and not (yet) affected by policy
-            node for node in self.graph.nodes() 
-            if self.grid.get_cell_list_contents([node])[0].impact == 0 and self.grid.get_cell_list_contents([node])[0].marginalized
-        ]
         
-        num_policy_expansion = max(1, int(round(self.num_agents * rel_policy_expansion / 2)))
-        affected_nodes = []
+        unaffected_privileged = self.agents.select(lambda a: a.impact == 0 and a.privileged) # agents that are both not marginalized and not (yet) affected by policy
+        unaffected_marginalized = self.agents.select(lambda a: a.impact == 0 and a.marginalized) # agents that are marginalized and not (yet) affected by policy
+ 
+        abs_policy_expansion_each_side = max(1, int(round(self.num_agents * rel_policy_expansion / 2))) # Note: the /2 entails that there will be the same number of winners and losers
+        newly_affected_agents = []
 
         # Handle marginalized nodes
-        if eligible_nodes_m:
-            size_m = min(num_policy_expansion, len(eligible_nodes_m))
-            affected_nodes.extend(
+        if unaffected_marginalized:
+            newly_affected_agents.extend(
                 np.random.choice(
-                    eligible_nodes_m,
-                    size=size_m,
+                    unaffected_marginalized,
+                    size=min(abs_policy_expansion_each_side, len(unaffected_marginalized)),
                     replace=False
                 )
             )
         
         # Handle non-marginalized nodes
-        if eligible_nodes_nm:
-            size_nm = min(num_policy_expansion, len(eligible_nodes_nm))
-            affected_nodes.extend(
+        if unaffected_privileged:
+            newly_affected_agents.extend(
                 np.random.choice(
-                    eligible_nodes_nm,
-                    size=size_nm,
+                    unaffected_privileged,
+                    size=min(abs_policy_expansion_each_side, len(unaffected_privileged)),
                     replace=False
                 )
         )
         
-        for node in affected_nodes:
-            agent = self.grid.get_cell_list_contents([node])[0]
-            agent.impact = 1 if agent.marginalized else -1
+        for a in newly_affected_agents:
+            a.impact = 1 if a.marginalized else -1
 
 
     def step(self):
         self.agents.shuffle_do("step")
 
-        # Dynamic edge formation
-        for agent in self.agents:
-            if abs(agent.opinion) >= self.trigger_level:
-                # Get neighbor IDs using agent.pos as key
-                neighbor_ids = list(self.grid.G.neighbors(agent.pos))  
-                
-                aligned_neighbors = [
-                    neighbor_id
-                    for neighbor_id in neighbor_ids
-                    if self.grid.get_cell_list_contents([neighbor_id])[0].opinion
-                    == np.sign(agent.opinion)
-                ]
-
-                affected_neighbors = [
-                    neighbor_id
-                    for neighbor_id in neighbor_ids
-                    if self.grid.get_cell_list_contents([neighbor_id])[0].impact
-                    == np.sign(agent.opinion)
-                ]
-
-                unaligned_neighbors = list(set(neighbor_ids) - set(aligned_neighbors))
-                unaffected_neighbors = list(set(neighbor_ids) - set(affected_neighbors))
-
-                if unaligned_neighbors and affected_neighbors:
-                    party_unaligned = np.random.choice(unaligned_neighbors)
-                     # Remove the selected unaligned party from affected_neighbors if present
-                    available_affected = [n for n in affected_neighbors if n != party_unaligned]
-                    if available_affected:  # Only proceed if we have valid targets
-                        party_affected = np.random.choice(available_affected)
-                        self.grid.G.add_edge(party_unaligned, party_affected)
-            
-        # is support is less than benefit, increase policy coverage
-        if self.policy_reaction and av_opinion(self) < av_impact(self): self.apply_policy(self.rel_policy_expansion)
+        # if support is less than benefit, increase policy coverage
+        if self.policy_reaction and av_opinion(self) < av_impact(self): 
+            self.apply_policy(self.rel_policy_expansion)
         
         # collect data
         self.datacollector.collect(self)

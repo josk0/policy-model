@@ -47,20 +47,18 @@ conda env create --file environment.yml
 ```
 or manually create environment
 ```bash
-conda create -n policymodel python numpy pandas tqdm matplotlib solara pytest scipy ipython networkx
+conda create -n policymodel python numpy pandas tqdm matplotlib solara pytest scipy ipython networkx mesa
 conda activate policymodel
-python -m pip install mesa
 ```
-(Note: the mesa package is installed with `pip` since it's not up-to-date in conda-forge)
 
-... or pick your favourite package manager
+... or pick your favorite package manager
 
 ### Files
 
 * ``model.py``: Contains the model class `PolicyModel`.
 * ``agents.py``: Contains the agent class `PolicyAgent`.
 * ``app.py``: Contains the code for the interactive Solara visualization.
-* ``analysis.ipynb``: Jupyter notebook to run and analyse the model.
+* ``analysis.ipynb``: Jupyter notebook to run and analyze the model.
 
 ## 🚀 Usage
 

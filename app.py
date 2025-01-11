@@ -2,18 +2,20 @@ import solara
 from mesa.visualization import Slider, SolaraViz, make_plot_component, make_space_component
 from mesa.visualization.utils import update_counter
 from matplotlib.figure import Figure
-import networkx as nx
 from model import PolicyModel
-from agents import PolicyAgent
 
 def agent_portrayal(agent):
     color = "gray"
     if agent.privileged:
-        if agent.impact == 0: color = "blue"  
-        else: color = "cyan"
+        if agent.impact == 0: 
+            color = "blue"  
+        else: 
+            color = "cyan"
     elif agent.marginalized:
-        if agent.impact == 0: color = "red"  
-        else: color = "pink"
+        if agent.impact == 0: 
+            color = "red"  
+        else: 
+            color = "pink"
     return {"size": 15, "color": color}
 
 
