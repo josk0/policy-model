@@ -79,10 +79,13 @@ class PolicyModel(Model):
           a.marginalized = node in marginalized_nodes
           a.privileged = node in privileged_nodes  
           self.grid.place_agent(a, node)
+          a.count_connections()
 
         # Apply initial policy intervention
         self.apply_policy(self.rel_policy_expansion)
     
+        # collect data
+        self.datacollector.collect(self)
 
     def apply_policy(self, rel_policy_expansion):
         

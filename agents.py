@@ -19,7 +19,8 @@ class PolicyAgent(Agent):
         self.privileged = privileged
         self.num_connections: int = 0
         
-        #if len(self.model.grid.get_neighbors(self.pos, include_center=False)) > 0: self.num_connections = len(self.model.grid.get_neighbors(self.pos, include_center=False))
+    def count_connections(self):
+        self.num_connections = len(self.model.grid.get_neighbors(self.pos, include_center=False)) 
 
     def step(self):
         neighbors = self.model.grid.get_neighbors(self.pos, include_center=False)
@@ -43,4 +44,5 @@ class PolicyAgent(Agent):
                     picked_affected_neighbor = np.random.choice(affected_neighbors)
                     self.model.grid.G.add_edge(picked_unaligned_neighbor.pos, picked_affected_neighbor.pos)
             
-            self.num_connections = len(self.model.grid.get_neighbors(self.pos, include_center=False))
+        self.count_connections()
+        
