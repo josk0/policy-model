@@ -19,7 +19,7 @@ class PolicyAgent(Agent):
         self.privileged = privileged
         self.num_connections: int = 0
         
-    def count_connections(self):
+    def count_connections(self) -> int:
         self.num_connections = len(self.model.grid.get_neighbors(self.pos, include_center=False)) 
 
     def step(self):
