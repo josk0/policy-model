@@ -38,6 +38,8 @@ class PolicyModel(Model):
         self.policy_reaction = policy_reaction
         self.rel_policy_expansion = rel_policy_expansion
 
+        self.running = True
+
         # Data collector
         self.datacollector = mesa.DataCollector(
             {
