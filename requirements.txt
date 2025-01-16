@@ -1,0 +1,10 @@
+numpy
+pandas
+tqdm
+matplotlib
+solara
+pytest
+scipy
+ipython
+networkx
+mesa

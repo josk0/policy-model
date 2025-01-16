@@ -51,6 +51,11 @@ conda create -n policymodel python numpy pandas tqdm matplotlib solara pytest sc
 conda activate policymodel
 ```
 
+### pip
+``` bash
+pip install -r requirements.txt
+```
+should also work.
 ... or pick your favorite package manager
 
 ### Files
