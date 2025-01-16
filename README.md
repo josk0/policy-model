@@ -58,7 +58,8 @@ conda activate policymodel
 * ``model.py``: Contains the model class `PolicyModel`.
 * ``agents.py``: Contains the agent class `PolicyAgent`.
 * ``app.py``: Contains the code for the interactive Solara visualization.
-* ``analysis.ipynb``: Jupyter notebook to run and analyze the model.
+* ``analysis.ipynb``: Jupyter notebook/scratchpad to run and analyze the model.
+* ``batch_run.py``: Script to run a batch of simulation with parameter sweeps, outputting results to a CSV file in /output.
 
 ## 🚀 Usage
 
@@ -75,6 +76,7 @@ solara run app.py
 - **Privileged Fraction**: Proportion of highly connected agents
 - **Marginalized Fraction**: Proportion of less connected agents
 - **Policy Coverage**: Initial policy coverage rate (and rate at which policy maker "doubles down")
+- **Policy Bias (pro marginalized)**: Relative size of policy coverage (initial and when "doubling down") of marginalized vs. privileged agents 
 - **Trigger Level**: Opinion threshold for network modification
 - **Policy Reaction**: Enable/disable policy maker "double down" behavior
 
@@ -83,7 +85,7 @@ solara run app.py
 The model provides real-time visualization with:
 - Network view showing agent types and connections
   - 🔵 Blue: Privileged agents
-  - 🔆 Light blue: Privileged agents affected by policy
+  - 🩵 Light blue: Privileged agents affected by policy
   - 🔴 Red: Marginalized agents
   - 💗 Pink: Marginalized agents affected by policy
   - ⚪ Grey: Unaffected agents
